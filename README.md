@@ -3,9 +3,10 @@
 Aplikasi Android (Kotlin) yang menampilkan panel catur melayang di atas aplikasi lain.
 
 ## Fitur saat ini
-- Panel overlay dengan tombol **GRID** (tampil/sembunyi papan), **+** / **-** (ukuran) dan **X** (tutup)
+- Panel kontrol melayang dengan tombol **GRID** (tampil/sembunyi garis grid 8x8 di layar), **+** / **-** (besar/kecil grid) dan **X** (tutup)
+- Lapisan grid tidak bisa disentuh, jadi tap tetap diteruskan ke aplikasi catur di bawahnya
 - Servis foreground dengan notifikasi
-- Papan masih berupa teks statis (posisi awal); belum ada engine atau saran langkah
+- Belum ada engine atau saran langkah, dan posisi grid belum bisa digeser
 
 ## Cara pakai
 1. Pasang APK, buka aplikasi, lalu tekan **MULAI OVERLAY**
@@ -26,4 +27,5 @@ app/
     java/com/chess/overlayadvisor/
       MainActivity.kt
       OverlayService.kt
+      BoardGuideView.kt
 ```
