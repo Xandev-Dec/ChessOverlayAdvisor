@@ -3,10 +3,10 @@
 Aplikasi Android (Kotlin) yang menampilkan panel catur melayang di atas aplikasi lain.
 
 ## Fitur saat ini
-- Panel kontrol melayang dengan tombol **GRID** (tampil/sembunyi garis grid 8x8 di layar), **+** / **-** (besar/kecil grid) dan **X** (tutup)
+- Panel kontrol melayang dengan tombol **GRID** (tampil/sembunyi garis grid 8x8 di layar), **+** / **-** (besar/kecil grid), panah **← ↑ ↓ →** (geser grid agar pas dengan papan) dan **X** (tutup)
 - Lapisan grid tidak bisa disentuh, jadi tap tetap diteruskan ke aplikasi catur di bawahnya
 - Servis foreground dengan notifikasi
-- Belum ada engine atau saran langkah, dan posisi grid belum bisa digeser
+- Belum ada engine atau saran langkah, dan panel kontrol belum bisa digeser
 
 ## Cara pakai
 1. Pasang APK, buka aplikasi, lalu tekan **MULAI OVERLAY**

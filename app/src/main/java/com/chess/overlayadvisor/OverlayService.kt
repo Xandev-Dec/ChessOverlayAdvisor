@@ -128,22 +128,35 @@ class OverlayService : Service() {
             setPadding(8, 8, 8, 12)
         }
 
-        val buttons = LinearLayout(this).apply {
+        val sizeRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+        }
+        val moveRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
         }
 
-        buttons.addView(makeButton("GRID") {
+        val resizeStep = 12f * density
+        val moveStep = 10f * density
+
+        sizeRow.addView(makeButton("GRID") {
             guideView.visibility =
                 if (guideView.visibility == View.VISIBLE) View.GONE
                 else View.VISIBLE
         })
-        buttons.addView(makeButton("+") { resizeGuide(12f * density) })
-        buttons.addView(makeButton("-") { resizeGuide(-12f * density) })
-        buttons.addView(makeButton("X") { stopSelf() })
+        sizeRow.addView(makeButton("+") { resizeGuide(resizeStep) })
+        sizeRow.addView(makeButton("-") { resizeGuide(-resizeStep) })
+        sizeRow.addView(makeButton("X") { stopSelf() })
+
+        moveRow.addView(makeButton("←") { moveGuide(-moveStep, 0f) })
+        moveRow.addView(makeButton("↑") { moveGuide(0f, -moveStep) })
+        moveRow.addView(makeButton("↓") { moveGuide(0f, moveStep) })
+        moveRow.addView(makeButton("→") { moveGuide(moveStep, 0f) })
 
         root.addView(header)
-        root.addView(buttons)
+        root.addView(sizeRow)
+        root.addView(moveRow)
         panel = root
 
         val panelParams = WindowManager.LayoutParams(
@@ -167,7 +180,27 @@ class OverlayService : Service() {
         val rect = view.boardRect
         val newWidth = rect.width() + 2f * step
         if (newWidth < 160f * metrics.density || newWidth > metrics.widthPixels) return
+        // Jangan biarkan grid melebar sampai keluar layar.
+        if (rect.left - step < 0f || rect.right + step > metrics.widthPixels ||
+            rect.top - step < 0f || rect.bottom + step > metrics.heightPixels
+        ) return
         rect.inset(-step, -step)
+        view.invalidate()
+    }
+
+    /** Geser grid (dalam piksel); posisinya dijaga tetap di dalam layar. */
+    private fun moveGuide(dx: Float, dy: Float) {
+        val view = guide ?: return
+        val metrics = resources.displayMetrics
+        val rect = view.boardRect
+        val minDx = -rect.left
+        val maxDx = metrics.widthPixels - rect.right
+        val minDy = -rect.top
+        val maxDy = metrics.heightPixels - rect.bottom
+        val moveX = if (minDx <= maxDx) dx.coerceIn(minDx, maxDx) else 0f
+        val moveY = if (minDy <= maxDy) dy.coerceIn(minDy, maxDy) else 0f
+        if (moveX == 0f && moveY == 0f) return
+        rect.offset(moveX, moveY)
         view.invalidate()
     }
 
