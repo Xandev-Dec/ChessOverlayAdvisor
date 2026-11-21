@@ -83,10 +83,10 @@ class OverlayService : Service() {
         val metrics = resources.displayMetrics
         val density = metrics.density
 
-        // Grid 8x8: persegi selebar layar (dikurangi margin), di tengah vertikal.
-        val boardSize = (metrics.widthPixels - 32f * density)
-            .coerceAtLeast(240f * density)
-        val left = 16f * density
+        // Grid 8x8: persegi selebar layar (papan di aplikasi catur umumnya penuh lebar),
+        // di tengah vertikal. Posisi dan ukuran bisa disesuaikan dengan tombol.
+        val boardSize = metrics.widthPixels.toFloat()
+        val left = 0f
         val top = (metrics.heightPixels - boardSize) / 2f
 
         val guideView = BoardGuideView(this).apply {
@@ -178,13 +178,24 @@ class OverlayService : Service() {
         val view = guide ?: return
         val metrics = resources.displayMetrics
         val rect = view.boardRect
-        val newWidth = rect.width() + 2f * step
-        if (newWidth < 160f * metrics.density || newWidth > metrics.widthPixels) return
-        // Jangan biarkan grid melebar sampai keluar layar.
-        if (rect.left - step < 0f || rect.right + step > metrics.widthPixels ||
-            rect.top - step < 0f || rect.bottom + step > metrics.heightPixels
-        ) return
-        rect.inset(-step, -step)
+        val delta: Float
+        if (step > 0f) {
+            // Membesar: berhenti tepat di tepi layar, bukan menolak langkah penuh.
+            delta = minOf(
+                step,
+                rect.left,
+                metrics.widthPixels - rect.right,
+                rect.top,
+                metrics.heightPixels - rect.bottom
+            )
+        } else {
+            // Mengecil: jaga ukuran minimum.
+            val minWidth = 160f * metrics.density
+            if (rect.width() <= minWidth) return
+            delta = maxOf(step, -(rect.width() - minWidth) / 2f)
+        }
+        if (delta == 0f) return
+        rect.inset(-delta, -delta)
         view.invalidate()
     }
 
