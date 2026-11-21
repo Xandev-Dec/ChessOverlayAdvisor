@@ -1,4 +1,3 @@
-
 package com.chess.overlayadvisor
 
 import android.app.Notification
@@ -132,6 +131,7 @@ class OverlayService : Service() {
                    a b c d e f g h
             """.trimIndent()
             textSize = panelSize
+            typeface = Typeface.MONOSPACE
             setTextColor(Color.WHITE)
             setPadding(8, 12, 8, 8)
             visibility = android.view.View.GONE
